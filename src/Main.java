@@ -1,14 +1,13 @@
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class Main {
 
     /**
      * Algorithm Properties
      */
-    public static final double LOW_THRESHOLD = 0.05;
-    public static final double HIGH_THRESHOLD = 0.10;
-    public static final double PROPORTION_CAPITAL_NOT_INVESTED = 0.05;
+    public static final double LOW_THRESHOLD = 0.03;
+    public static final double HIGH_THRESHOLD = 0.05;
+    public static final double PROPORTION_CAPITAL_NOT_INVESTED = 0.1;
 
     /**
      * Indicators Properties
@@ -51,7 +50,7 @@ public class Main {
                 .indicators(indicators)
                 .build();
 
-        var backTesting = BackTesting.builder().algorithm(algorithm).build();
+        var backTesting = Backtest.builder().algorithm(algorithm).build();
         backTesting.backtest(LocalDate.parse(FROM_DATE), LocalDate.parse(TO_DATE));
     }
 }

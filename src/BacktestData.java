@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BackTestingData {
+public class BacktestData {
 
     private static final String DATA_CSV = "BTC-USD.csv";
 

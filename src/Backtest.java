@@ -1,13 +1,12 @@
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 @Builder
-public class BackTesting {
+public class Backtest {
     private final TradingAlgorithm algorithm;
     public void backtest(LocalDate fromDate, LocalDate toDate) {
 
@@ -23,7 +22,7 @@ public class BackTesting {
 
         System.out.printf("out-performance: %s%%\n", getOutperformance(fromDate, toDate));
 
-
+        GraphicsPlotter.plotOutperformance(algorithm);
     }
 
 

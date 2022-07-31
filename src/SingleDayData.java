@@ -23,5 +23,6 @@ public class SingleDayData {
     @Getter
     @Setter
     private static class TimeDetailData {
+        LocalTime time;
     }
 }

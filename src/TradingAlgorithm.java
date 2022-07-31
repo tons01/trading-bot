@@ -1,6 +1,5 @@
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -19,7 +18,7 @@ public class TradingAlgorithm {
         this.algorithmProperties = algorithmProperties;
         this.financeManager = financeManager;
         this.indicators = indicators;
-        this.data = BackTestingData.readData();
+        this.data = BacktestData.readData();
     }
 
 
@@ -27,6 +26,12 @@ public class TradingAlgorithm {
      * Please implement the algorithm in this method.
      */
     public void performAlgorithm(LocalDate date) {
+
+        if (date.equals(LocalDate.parse(Main.FROM_DATE))) {
+            financeManager.buy(10000, data.get(date).getOpen());
+        }
+
+
 
         double open = data.get(date).getOpen();
         if (isHighThresholdReached(date)) {
@@ -37,7 +42,7 @@ public class TradingAlgorithm {
             double buyAmount = financeManager.getMoneyNoInvested() * algorithmProperties.getProportionCapitalNotInvested();
             financeManager.buy(buyAmount, open);
         }
-        
+
     }
 
 
