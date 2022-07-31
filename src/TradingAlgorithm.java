@@ -8,14 +8,13 @@ import java.util.Map;
 @Setter
 public class TradingAlgorithm {
     public AlgorithmProperties algorithmProperties;
-
-    public FinanceHelper financeHelper;
+    public FinanceManager financeManager;
     public Map<LocalDate, HistoricalDataLine> data;
     public Indicators indicators;
 
-    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceHelper financeHelper) {
+    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager) {
         this.algorithmProperties = algorithmProperties;
-        this.financeHelper = financeHelper;
+        this.financeManager = financeManager;
         this.data = BackTestingData.readData();
         this.indicators = new Indicators(algorithmProperties.getIndicatorProperties().getRsiLength());
     }
@@ -27,12 +26,12 @@ public class TradingAlgorithm {
 
         double open = data.get(date).getOpen();
         if (isHighThresholdReached(date)) {
-            double sellAmount = financeHelper.getCapitalInvested() * algorithmProperties.getProportionCapitalNotInvested();
-            financeHelper.sell(sellAmount, open);
+            double sellAmount = financeManager.getMoneyInvested() * algorithmProperties.getProportionCapitalNotInvested();
+            financeManager.sell(sellAmount, open);
         }
         if (isLowThresholdReached(date)) {
-            double buyAmount = financeHelper.getCapitalNotInvested() * algorithmProperties.getProportionCapitalNotInvested();
-            financeHelper.buy(buyAmount, open);
+            double buyAmount = financeManager.getMoneyNoInvested() * algorithmProperties.getProportionCapitalNotInvested();
+            financeManager.buy(buyAmount, open);
         }
     }
 

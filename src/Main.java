@@ -22,7 +22,7 @@ public class Main {
                                 .build())
                 .build();
 
-        var financialData = new FinanceHelper(10000);
+        var financialData = new FinanceManager(10000);
 
         var algorithm = new TradingAlgorithm(algorithmProperties, financialData);
 

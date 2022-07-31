@@ -18,7 +18,7 @@ public class Indicators {
 
     private Map<LocalDate, Double> historicalRSIs = new HashMap<>();
 
-    public void calculateRSI(Map<LocalDate, HistoricalDataLine> data, FinanceHelper financeHelper, LocalDate date) {
+    public void calculateRSI(Map<LocalDate, HistoricalDataLine> data, FinanceManager financeManager, LocalDate date) {
 
         double losses = 0;
         double gains = 0;
