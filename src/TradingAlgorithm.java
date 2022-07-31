@@ -1,56 +1,49 @@
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Getter
 @Setter
 public class TradingAlgorithm {
-
     public AlgorithmProperties algorithmProperties;
-    public FinancialHelper financialHelper;
-    public LinkedList<HistoricalDataLine> data;
+
+    public FinanceHelper financeHelper;
+    public Map<LocalDate, HistoricalDataLine> data;
     public Indicators indicators;
 
-    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinancialHelper financialHelper) {
+    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceHelper financeHelper) {
         this.algorithmProperties = algorithmProperties;
-        this.financialHelper = financialHelper;
+        this.financeHelper = financeHelper;
         this.data = BackTestingData.readData();
-        this.indicators = new Indicators();
-
+        this.indicators = new Indicators(algorithmProperties.getIndicatorProperties().getRsiLength());
     }
 
-    private void performAlgorithm(int dayIndex) {
-         double open = data.get(dayIndex).getOpen();
-        if (isHighThresholdReached(dayIndex)) {
-            double sellAmount = financialHelper.getCapitalInvested() * 0.05;
-            financialHelper.sell(sellAmount, open);
+    /**
+     * Please implement the algorithm in this method.
+     */
+    public void performAlgorithm(LocalDate date) {
+
+        double open = data.get(date).getOpen();
+        if (isHighThresholdReached(date)) {
+            double sellAmount = financeHelper.getCapitalInvested() * algorithmProperties.getProportionCapitalNotInvested();
+            financeHelper.sell(sellAmount, open);
         }
-        if (isLowThresholdReached(dayIndex)) {
-            double buyAmount = financialHelper.getCapitalNotInvested() * 0.05;
-            financialHelper.buy(buyAmount, open);
+        if (isLowThresholdReached(date)) {
+            double buyAmount = financeHelper.getCapitalNotInvested() * algorithmProperties.getProportionCapitalNotInvested();
+            financeHelper.buy(buyAmount, open);
         }
     }
 
-    public void performIteration(int day) {
-        performAlgorithm(day);
-        indicators.calculateRSI(data, financialHelper, day, 14);
+
+    private boolean isLowThresholdReached(LocalDate date) {
+        double openDifference = data.get(date.minusDays(1)).getOpen() - data.get(date).getOpen();
+        return openDifference > data.get(date.minusDays(1)).getOpen() * algorithmProperties.getLowThreshold();
     }
 
-
-    private boolean isLowThresholdReached(int dayIndex) {
-        double openDifference = data.get(dayIndex - 1).getOpen() - data.get(dayIndex).getOpen();
-        return openDifference > data.get(dayIndex - 1).getOpen() * algorithmProperties.getThreshold();
+    private boolean isHighThresholdReached(LocalDate date) {
+        double openDifference = data.get(date).getOpen() - data.get(date.minusDays(1)).getOpen();
+        return openDifference > data.get(date.minusDays(1)).getOpen() * algorithmProperties.getHighThreshold();
     }
-
-    private boolean isHighThresholdReached(int iteration) {
-        double openDifference = data.get(iteration).getOpen() - data.get(iteration - 1).getOpen();
-        return openDifference > data.get(iteration - 1).getOpen() * algorithmProperties.getThreshold();
-    }
-
-
 }

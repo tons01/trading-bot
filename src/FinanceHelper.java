@@ -4,21 +4,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FinancialHelper {
+public class FinanceHelper {
 
     public double capitalInvested;
     public double capitalNotInvested;
-
     public double amountCoins;
 
-    public FinancialHelper(double initialCapital) {
+    public FinanceHelper(double initialCapital) {
         this.capitalNotInvested = initialCapital;
     }
 
     public void buy(double moneyAmount, double currentPrice) {
         capitalNotInvested -= moneyAmount;
         capitalInvested += moneyAmount;
-
 
         // refreshes amount of coins
         amountCoins += moneyAmount / currentPrice;

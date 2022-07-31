@@ -6,11 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AlgorithmProperties {
-    public double threshold;
-    public double proportionCapitalNotInvested;
+    private double lowThreshold;
+    private double highThreshold;
+    private double proportionCapitalNotInvested;
 
-    public AlgorithmProperties(double threshold, double proportionCapitalNotInvested) {
-        this.threshold = threshold;
-        this.proportionCapitalNotInvested = proportionCapitalNotInvested;
+    private IndicatorProperties indicatorProperties;
+
+    @Builder
+    @Getter
+    @Setter
+    public static class IndicatorProperties {
+        private int rsiLength;
     }
 }

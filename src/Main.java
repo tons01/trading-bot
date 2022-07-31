@@ -1,27 +1,32 @@
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Main {
+
+
     public static void main(String[] args) {
         var runTimeStart = System.currentTimeMillis();
-
-        execute();
-
+        execute("2017-09-01", "2022-07-01");
         var runTimeEnd = System.currentTimeMillis();
-        System.out.printf("runtime duration: %sms", runTimeEnd-runTimeStart);
+        System.out.printf("runtime duration: %sms", runTimeEnd - runTimeStart);
     }
 
-    private static void execute() {
+    private static void execute(String startDate, String endDate) {
+
         var algorithmProperties = AlgorithmProperties.builder()
-                .threshold(0.01)
+                .lowThreshold(0.05)
+                .highThreshold(0.10)
                 .proportionCapitalNotInvested(0.05)
+                .indicatorProperties(
+                        AlgorithmProperties.IndicatorProperties.builder()
+                                .rsiLength(14)
+                                .build())
                 .build();
 
-        var financialData = new FinancialHelper(10000);
+        var financialData = new FinanceHelper(10000);
 
         var algorithm = new TradingAlgorithm(algorithmProperties, financialData);
 
         var backTesting = new BackTesting(algorithm);
-
-        backTesting.backtest(15, Date.valueOf("2021-12-01"), Date.valueOf("2022-07-29"));
+        backTesting.backtest(LocalDate.parse(startDate), LocalDate.parse(endDate));
     }
 }

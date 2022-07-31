@@ -1,34 +1,38 @@
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.security.KeyPair;
-import java.time.Instant;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Getter
 @Setter
 public class Indicators {
 
-    public LinkedList<Map.Entry<Instant,Double>> historicalRSIs = new LinkedList<>();
+    private int rsiLength;
 
-    public void calculateRSI(LinkedList<HistoricalDataLine> data, FinancialHelper financialHelper, int dayIndex, int rsiLength) {
+    public Indicators(int rsiLength) {
+        this.rsiLength = rsiLength;
+    }
+
+    private Map<LocalDate, Double> historicalRSIs = new HashMap<>();
+
+    public void calculateRSI(Map<LocalDate, HistoricalDataLine> data, FinanceHelper financeHelper, LocalDate date) {
 
         double losses = 0;
         double gains = 0;
-        for (int i = 0; i < rsiLength; i++) {
-            losses += Math.max(data.get(dayIndex - i -1).getOpen() - data.get(dayIndex-i).getOpen(), 0);
-            gains += Math.max(data.get(dayIndex-i).getOpen()-data.get(dayIndex-i-1).getOpen(), 0);
+        for (int daysBack = 0; daysBack < rsiLength; daysBack++) {
+            losses += Math.max(data.get(date.minusDays(daysBack + 1)).getOpen() - data.get(date.minusDays(daysBack)).getOpen(), 0);
+            gains += Math.max(data.get(date.minusDays(daysBack)).getOpen() - data.get(date.minusDays(daysBack + 1)).getOpen(), 0);
         }
-        double lossAvg = losses/rsiLength;
-        double gainAvg = gains/rsiLength;
+        double lossAvg = losses / rsiLength;
+        double gainAvg = gains / rsiLength;
 
-        double rs = gainAvg/lossAvg;
-        double rsi = 100 - 100/(1+rs);
+        double rs = gainAvg / lossAvg;
+        double rsi = 100 - 100 / (1 + rs);
 
-        var date = data.get(dayIndex).getTimestamp();
-        historicalRSIs.addFirst(Map.entry(date,rs));
+        historicalRSIs.put(date, rsi);
     }
 
     public void refreshIndicators() {

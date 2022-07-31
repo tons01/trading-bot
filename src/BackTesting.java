@@ -1,10 +1,8 @@
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-@Builder
 @Getter
 @Setter
 public class BackTesting {
@@ -14,27 +12,27 @@ public class BackTesting {
         this.algorithm = algorithm;
     }
 
-    public void backtest(int initialDay, Date startDate, Date endDate) {
+    public void backtest(LocalDate startDate, LocalDate endDate) {
 
-        for (int dayIndex = initialDay; dayIndex < algorithm.getData().size(); dayIndex++) {
+        startDate.datesUntil(endDate).forEach(date -> {
+            var open = algorithm.getData().get(date).getOpen();
+            algorithm.getFinanceHelper().refreshCapitalInvested(open);
 
-            double open = algorithm.getData().get(dayIndex).getOpen();
-            algorithm.getFinancialHelper().refreshCapitalInvested(open);
+            algorithm.getIndicators().calculateRSI(algorithm.getData(), algorithm.getFinanceHelper(), date);
 
-            algorithm.performIteration(dayIndex);
+            algorithm.performAlgorithm(date);
 
-            printTradingInfo(dayIndex);
-
-        }
+            printTradingInfo(date);
+        });
     }
 
-    private void printTradingInfo(int dayIndex) {
+    private void printTradingInfo(LocalDate date) {
         var tradingInfo = String.format("date: %s, invested: %s, not invested: %s, total: %s, coins amount: %s",
-                Date.from(algorithm.getData().get(dayIndex).getTimestamp()),
-                algorithm.getFinancialHelper().getCapitalInvested(),
-                algorithm.getFinancialHelper().getCapitalNotInvested(),
-                algorithm.getFinancialHelper().getCashTotal(),
-                algorithm.getFinancialHelper().getAmountCoins());
+                date,
+                algorithm.getFinanceHelper().getCapitalInvested(),
+                algorithm.getFinanceHelper().getCapitalNotInvested(),
+                algorithm.getFinanceHelper().getCashTotal(),
+                algorithm.getFinanceHelper().getAmountCoins());
         System.out.println(tradingInfo);
     }
 }
