@@ -1,4 +1,6 @@
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -7,17 +9,19 @@ import java.util.Map;
 @Getter
 @Setter
 public class TradingAlgorithm {
-    public AlgorithmProperties algorithmProperties;
-    public FinanceManager financeManager;
-    public Map<LocalDate, HistoricalDataLine> data;
-    public Indicators indicators;
+    private final AlgorithmProperties algorithmProperties;
+    private final FinanceManager financeManager;
+    private final Indicators indicators;
+    private Map<LocalDate, SingleDayData> data;
 
-    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager) {
+    @Builder
+    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager, Indicators indicators) {
         this.algorithmProperties = algorithmProperties;
         this.financeManager = financeManager;
+        this.indicators = indicators;
         this.data = BackTestingData.readData();
-        this.indicators = new Indicators(algorithmProperties.getIndicatorProperties().getRsiLength());
     }
+
 
     /**
      * Please implement the algorithm in this method.
@@ -33,6 +37,7 @@ public class TradingAlgorithm {
             double buyAmount = financeManager.getMoneyNoInvested() * algorithmProperties.getProportionCapitalNotInvested();
             financeManager.buy(buyAmount, open);
         }
+        
     }
 
 

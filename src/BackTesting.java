@@ -1,34 +1,33 @@
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
+@Builder
 public class BackTesting {
-    public TradingAlgorithm algorithm;
+    private final TradingAlgorithm algorithm;
+    public void backtest(LocalDate fromDate, LocalDate toDate) {
 
-    public BackTesting(TradingAlgorithm algorithm) {
-        this.algorithm = algorithm;
-    }
+        fromDate.datesUntil(toDate).forEach(date -> {
 
-    public void backtest(LocalDate startDate, LocalDate endDate) {
+            algorithm.getFinanceManager().refreshFinance(algorithm, date);
+            algorithm.getIndicators().refreshIndicators(algorithm, date);
 
-        startDate.datesUntil(endDate).forEach(date -> {
-
-            var open = algorithm.getData().get(date).getOpen();
-
-            algorithm.getFinanceManager().refreshCapitalInvested(open);
-            algorithm.getIndicators().calculateRSI(algorithm.getData(), algorithm.getFinanceManager(), date);
             algorithm.performAlgorithm(date);
 
             printTradingInfo(date);
         });
 
-        System.out.printf("out-performance: %s%%\n", getOutperformance(startDate, endDate));
+        System.out.printf("out-performance: %s%%\n", getOutperformance(fromDate, toDate));
 
 
     }
+
+
+
 
     private double getOutperformance(LocalDate startDate, LocalDate endDate) {
         double openInitial = algorithm.getData().get(startDate).getOpen();

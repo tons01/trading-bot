@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class BackTestingData {
 
-    public static final String DATA_CSV = "BTC-USD.csv";
+    private static final String DATA_CSV = "BTC-USD.csv";
 
-    public static Map<LocalDate, HistoricalDataLine> readData() {
-        var data = new HashMap<LocalDate, HistoricalDataLine>();
+    public static Map<LocalDate, SingleDayData> readData() {
+        var data = new HashMap<LocalDate, SingleDayData>();
         try {
             var reader = new BufferedReader(new FileReader(DATA_CSV));
 
@@ -30,8 +30,8 @@ public class BackTestingData {
         return data;
     }
 
-    private static HistoricalDataLine buildHistoricalDataLine(String[] values, LocalDate date) {
-        return HistoricalDataLine.builder()
+    private static SingleDayData buildHistoricalDataLine(String[] values, LocalDate date) {
+        return SingleDayData.builder()
                 .date(date)
                 .open(Double.parseDouble(values[1]))
                 .high(Double.parseDouble(values[2]))

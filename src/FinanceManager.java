@@ -1,5 +1,8 @@
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -10,6 +13,7 @@ public class FinanceManager {
     public double moneyNoInvested;
     public double amountCoins;
 
+    @Builder
     public FinanceManager(double initialCapital) {
         this.initialCapital = initialCapital;
         this.moneyNoInvested = initialCapital;
@@ -35,7 +39,13 @@ public class FinanceManager {
         amountCoins -= moneyAmount / currentPrice;
     }
 
-    public void refreshCapitalInvested(double currentPrice) {
+    public void refreshFinance(TradingAlgorithm algorithm, LocalDate date) {
+        var currentPrice = algorithm.getData().get(date).getOpen();
+
+        refreshCapitalInvested(currentPrice);
+    }
+
+    private void refreshCapitalInvested(double currentPrice) {
         moneyInvested = amountCoins * currentPrice;
     }
 
