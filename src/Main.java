@@ -34,11 +34,7 @@ public class Main {
 
     private static void execute() {
 
-        var algorithmProperties = AlgorithmProperties.builder()
-                .lowThreshold(LOW_THRESHOLD)
-                .highThreshold(HIGH_THRESHOLD)
-                .proportion(PROPORTION_CAPITAL_NOT_INVESTED)
-                .build();
+        var algorithmProperties = AlgorithmProperties.builder().build();
 
         var financeManager = FinanceManager.builder().initialCapital(INITIAL_CAPITAL).build();
 

@@ -48,15 +48,4 @@ public class TradingAlgorithm {
         }
 
     }
-
-
-    private boolean isLowThresholdReached(LocalDate date) {
-        double openDifference = data.get(date.minusDays(1)).getOpen() - data.get(date).getOpen();
-        return openDifference > data.get(date.minusDays(1)).getOpen() * algorithmProperties.getLowThreshold();
-    }
-
-    private boolean isHighThresholdReached(LocalDate date) {
-        double openDifference = data.get(date).getOpen() - data.get(date.minusDays(1)).getOpen();
-        return openDifference > data.get(date.minusDays(1)).getOpen() * algorithmProperties.getHighThreshold();
-    }
 }

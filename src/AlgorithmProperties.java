@@ -6,7 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AlgorithmProperties {
-    private double lowThreshold;
-    private double highThreshold;
-    private double proportion;
+
 }
