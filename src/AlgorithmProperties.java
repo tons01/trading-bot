@@ -8,5 +8,5 @@ import lombok.Setter;
 public class AlgorithmProperties {
     private double lowThreshold;
     private double highThreshold;
-    private double proportionCapitalNotInvested;
+    private double proportion;
 }

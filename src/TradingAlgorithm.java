@@ -29,18 +29,22 @@ public class TradingAlgorithm {
 
         if (date.equals(LocalDate.parse(Main.FROM_DATE))) {
             financeManager.buy(10000, data.get(date).getOpen());
+            return;
         }
-
-
 
         double open = data.get(date).getOpen();
-        if (isHighThresholdReached(date)) {
-            double sellAmount = financeManager.getMoneyInvested() * algorithmProperties.getProportionCapitalNotInvested();
-            financeManager.sell(sellAmount, open);
-        }
-        if (isLowThresholdReached(date)) {
-            double buyAmount = financeManager.getMoneyNoInvested() * algorithmProperties.getProportionCapitalNotInvested();
+        Map<LocalDate, Double> sma50s = indicators.getHistoricalSMA50s();
+        Map<LocalDate, Double> sma200s = indicators.getHistoricalSMA200s();
+
+        if (sma50s.get(date) > sma200s.get(date) &&
+            sma50s.get(date.minusDays(1)) < sma200s.get(date.minusDays(1))) {
+            double buyAmount = financeManager.getMoneyNoInvested()*1.0;
             financeManager.buy(buyAmount, open);
+        }
+        if (sma50s.get(date) < sma200s.get(date) &&
+            sma50s.get(date.minusDays(1)) > sma200s.get(date.minusDays(1))) {
+            double sellAmount = financeManager.getMoneyInvested()*1.0;
+            financeManager.sell(sellAmount, open);
         }
 
     }

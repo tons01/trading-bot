@@ -12,22 +12,26 @@ import java.util.stream.Collectors;
 @Setter
 public class Indicators {
     private final int rsiLength;
+    private final LocalDate fromDate;
+    private final LocalDate toDate;
 
     private Map<LocalDate, Double> historicalRSIs;
     private Map<LocalDate, Double> historicalSMA200s;
     private Map<LocalDate, Double> historicalSMA50s;
 
     @Builder
-    public Indicators(int rsiLength) {
+    public Indicators(int rsiLength, LocalDate fromDate, LocalDate toDate) {
         this.rsiLength = rsiLength;
+        this.fromDate=fromDate;
+        this.toDate=toDate;
+
         this.historicalRSIs = new HashMap<>();
         this.historicalSMA200s = new HashMap<>();
         this.historicalSMA50s = new HashMap<>();
     }
 
     public void calculateIndicators(TradingAlgorithm algorithm) {
-        var fromDate = LocalDate.parse(Main.FROM_DATE);
-        var toDate = LocalDate.parse(Main.TO_DATE);
+
         var data = algorithm.getData();
 
         calculateRSI(data, fromDate, toDate);
@@ -59,16 +63,16 @@ public class Indicators {
     private void calculateSMA200(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
 
         int daysBack = 200;
-        getSMArecursive(dateFrom, data, daysBack, historicalSMA200s, dateTo);
+        calculateSmaRecursive(dateFrom, data, daysBack, historicalSMA200s, dateTo);
     }
 
     private void calculateSMA50(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
         int daysBack = 50;
-        getSMArecursive(dateFrom, data, daysBack, historicalSMA50s, dateTo);
+        calculateSmaRecursive(dateFrom, data, daysBack, historicalSMA50s, dateTo);
     }
 
-    private void getSMArecursive(LocalDate dateFrom, Map<LocalDate, SingleDayData> data, int daysBack, Map<LocalDate, Double> historicalRSIs, LocalDate dateTo) {
-        double sma = getSMAon(dateFrom, data, daysBack);
+    private void calculateSmaRecursive(LocalDate dateFrom, Map<LocalDate, SingleDayData> data, int daysBack, Map<LocalDate, Double> historicalRSIs, LocalDate dateTo) {
+        double sma = calculateSmaRegular(dateFrom, data, daysBack);
         historicalRSIs.put(dateFrom, sma);
 
         dateFrom.plusDays(1).datesUntil(dateTo.plusDays(1)).forEach(date -> {
@@ -77,7 +81,7 @@ public class Indicators {
         });
     }
 
-    private double getSMAon(LocalDate date, Map<LocalDate, SingleDayData> data, int daysBack) {
+    private double calculateSmaRegular(LocalDate date, Map<LocalDate, SingleDayData> data, int daysBack) {
         var lastDays = date.minusDays(daysBack).datesUntil(date.plusDays(1)).collect(Collectors.toList());
         var subMap = new HashMap<>(data);
         subMap.keySet().retainAll(lastDays);

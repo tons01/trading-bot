@@ -7,7 +7,7 @@ public class Main {
      */
     public static final double LOW_THRESHOLD = 0.03;
     public static final double HIGH_THRESHOLD = 0.05;
-    public static final double PROPORTION_CAPITAL_NOT_INVESTED = 0.1;
+    public static final double PROPORTION_CAPITAL_NOT_INVESTED = 0.25;
 
     /**
      * Indicators Properties
@@ -37,12 +37,16 @@ public class Main {
         var algorithmProperties = AlgorithmProperties.builder()
                 .lowThreshold(LOW_THRESHOLD)
                 .highThreshold(HIGH_THRESHOLD)
-                .proportionCapitalNotInvested(PROPORTION_CAPITAL_NOT_INVESTED)
+                .proportion(PROPORTION_CAPITAL_NOT_INVESTED)
                 .build();
 
         var financeManager = FinanceManager.builder().initialCapital(INITIAL_CAPITAL).build();
 
-        var indicators = Indicators.builder().rsiLength(RSI_LENGTH).build();
+        var indicators = Indicators.builder()
+                .rsiLength(RSI_LENGTH)
+                .fromDate(LocalDate.parse(FROM_DATE))
+                .toDate(LocalDate.parse(TO_DATE))
+                .build();
 
         var algorithm = TradingAlgorithm.builder()
                 .algorithmProperties(algorithmProperties)
