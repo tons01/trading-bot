@@ -5,15 +5,14 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 @Getter
 @Setter
 public class FinanceManager {
 
     private final double initialCapital;
-    private double moneyInvested;
-    private double moneyNoInvested;
+    private double capitalInvested;
+    private double capitalNotInvested;
     private double amountCoins;
 
     private Map<LocalDate, HistoricalFinanceDataLine> historicalFinanceData;
@@ -21,25 +20,35 @@ public class FinanceManager {
     @Builder
     public FinanceManager(double initialCapital) {
         this.initialCapital = initialCapital;
-        this.moneyNoInvested = initialCapital;
+        this.capitalNotInvested = initialCapital;
         this.historicalFinanceData = new HashMap<>();
     }
 
     public double getCashTotal() {
-        return moneyInvested + moneyNoInvested;
+        return capitalInvested + capitalNotInvested;
     }
 
     public void buy(double moneyAmount, double currentPrice) {
-        moneyNoInvested -= moneyAmount;
-        moneyInvested += moneyAmount;
+        if (moneyAmount > capitalNotInvested) {
+            System.err.println("moneyAmount mustn't exceed capitalNotInvested");
+            return;
+        }
+
+        capitalNotInvested -= moneyAmount;
+        capitalInvested += moneyAmount;
 
         // refreshes amount of coins
         amountCoins += moneyAmount / currentPrice;
     }
 
     public void sell(double moneyAmount, double currentPrice) {
-        moneyNoInvested += moneyAmount;
-        moneyInvested -= moneyAmount;
+        if (moneyAmount > capitalInvested) {
+            System.err.println("moneyAmount mustn't exceed capitalNotInvested");
+            return;
+        }
+
+        capitalNotInvested += moneyAmount;
+        capitalInvested -= moneyAmount;
 
         // refreshes amount of coins
         amountCoins -= moneyAmount / currentPrice;
@@ -51,8 +60,8 @@ public class FinanceManager {
 
 
         HistoricalFinanceDataLine historicalFinanceDataLine = HistoricalFinanceDataLine.builder()
-                .moneyInvested(moneyInvested)
-                .moneyNoInvested(moneyNoInvested)
+                .moneyInvested(capitalInvested)
+                .moneyNoInvested(capitalNotInvested)
                 .moneyTotal(getCashTotal())
                 .amountCoins(amountCoins)
                 .build();
@@ -61,7 +70,7 @@ public class FinanceManager {
     }
 
     private void refreshCapitalInvested(double currentPrice) {
-        moneyInvested = amountCoins * currentPrice;
+        capitalInvested = amountCoins * currentPrice;
     }
 
     @Getter

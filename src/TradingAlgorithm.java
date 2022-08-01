@@ -29,7 +29,7 @@ public class TradingAlgorithm {
     public void performAlgorithm(LocalDate date) {
 
         if (date.equals(initalDate)) {
-            financeManager.buy(10000, data.get(date).getOpen());
+            financeManager.buy(0, data.get(date).getOpen());
             return;
         }
 
@@ -39,12 +39,12 @@ public class TradingAlgorithm {
 
         if (sma50s.get(date) > sma200s.get(date) &&
             sma50s.get(date.minusDays(1)) < sma200s.get(date.minusDays(1))) {
-            double buyAmount = financeManager.getMoneyNoInvested();
+            double buyAmount = financeManager.getCapitalNotInvested();
             financeManager.buy(buyAmount, open);
         }
         if (sma50s.get(date) < sma200s.get(date) &&
             sma50s.get(date.minusDays(1)) > sma200s.get(date.minusDays(1))) {
-            double sellAmount = financeManager.getMoneyInvested();
+            double sellAmount = financeManager.getCapitalInvested();
             financeManager.sell(sellAmount, open);
         }
     }

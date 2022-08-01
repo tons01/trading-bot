@@ -1,6 +1,7 @@
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -15,21 +16,18 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Builder
 public class GraphicsPlotter extends JPanel {
+    //margin
+    private static final int marg = 60;
     // plot boolean
     private static boolean plotHistoricalMoneyTotal = true;
     private static boolean plotOutperformIndex = true;
     private static boolean plotSma50 = true;
     private static boolean plotSma200 = true;
-
     // data
     private final List<Double> historicalMoneyTotal;
     private final List<Double> outperformIndex;
-
     private final List<Double> sma50;
     private final List<Double> sma200;
-
-    //margin
-    private static final int marg = 60;
 
     public static void plotOutperformance(TradingAlgorithm algorithm) {
         var historicalFinanceData = algorithm.getFinanceManager().getHistoricalFinanceData();

@@ -40,8 +40,8 @@ public class Backtest {
     private void printTradingInfo(LocalDate date) {
         System.out.printf("date: %s, invested: %s, not invested: %s, total: %s, coins amount: %s\n",
                 date,
-                algorithm.getFinanceManager().getMoneyInvested(),
-                algorithm.getFinanceManager().getMoneyNoInvested(),
+                algorithm.getFinanceManager().getCapitalInvested(),
+                algorithm.getFinanceManager().getCapitalNotInvested(),
                 algorithm.getFinanceManager().getCashTotal(),
                 algorithm.getFinanceManager().getAmountCoins());
     }
