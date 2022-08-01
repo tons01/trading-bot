@@ -22,7 +22,7 @@ public class Main {
     /**
      * Backtesting Detail Properties
      */
-    public static final String FROM_DATE = "2017-09-01";
+    public static final String FROM_DATE = "2018-05-01";
     public static final String TO_DATE = "2022-07-01";
 
     public static void main(String[] args) {

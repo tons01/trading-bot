@@ -10,10 +10,11 @@ public class Backtest {
     private final TradingAlgorithm algorithm;
     public void backtest(LocalDate fromDate, LocalDate toDate) {
 
+        algorithm.getIndicators().calculateIndicators(algorithm);
+
         fromDate.datesUntil(toDate).forEach(date -> {
 
             algorithm.getFinanceManager().refreshFinance(algorithm, date);
-            algorithm.getIndicators().refreshIndicators(algorithm, date);
 
             algorithm.performAlgorithm(date);
 
