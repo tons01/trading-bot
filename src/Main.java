@@ -48,6 +48,7 @@ public class Main {
                 .algorithmProperties(algorithmProperties)
                 .financeManager(financeManager)
                 .indicators(indicators)
+                .initalDate(LocalDate.parse(FROM_DATE))
                 .build();
 
         var backTesting = Backtest.builder().algorithm(algorithm).build();

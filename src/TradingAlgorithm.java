@@ -12,22 +12,23 @@ public class TradingAlgorithm {
     private final FinanceManager financeManager;
     private final Indicators indicators;
     private Map<LocalDate, SingleDayData> data;
+    private final LocalDate initalDate;
 
     @Builder
-    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager, Indicators indicators) {
+    public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager, Indicators indicators, LocalDate initalDate) {
         this.algorithmProperties = algorithmProperties;
         this.financeManager = financeManager;
         this.indicators = indicators;
+        this.initalDate = initalDate;
         this.data = BacktestData.readData();
     }
-
 
     /**
      * Please implement the algorithm in this method.
      */
     public void performAlgorithm(LocalDate date) {
 
-        if (date.equals(LocalDate.parse(Main.FROM_DATE))) {
+        if (date.equals(initalDate)) {
             financeManager.buy(10000, data.get(date).getOpen());
             return;
         }
@@ -38,14 +39,13 @@ public class TradingAlgorithm {
 
         if (sma50s.get(date) > sma200s.get(date) &&
             sma50s.get(date.minusDays(1)) < sma200s.get(date.minusDays(1))) {
-            double buyAmount = financeManager.getMoneyNoInvested()*1.0;
+            double buyAmount = financeManager.getMoneyNoInvested();
             financeManager.buy(buyAmount, open);
         }
         if (sma50s.get(date) < sma200s.get(date) &&
             sma50s.get(date.minusDays(1)) > sma200s.get(date.minusDays(1))) {
-            double sellAmount = financeManager.getMoneyInvested()*1.0;
+            double sellAmount = financeManager.getMoneyInvested();
             financeManager.sell(sellAmount, open);
         }
-
     }
 }
