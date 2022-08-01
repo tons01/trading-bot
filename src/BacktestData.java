@@ -40,7 +40,5 @@ public class BacktestData {
                 .adjClose(Double.parseDouble(values[5]))
                 .volume(Double.parseDouble(values[6]))
                 .build();
-
-
     }
 }

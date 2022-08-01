@@ -3,13 +3,6 @@ import java.time.LocalDate;
 public class Main {
 
     /**
-     * Algorithm Properties
-     */
-    public static final double LOW_THRESHOLD = 0.03;
-    public static final double HIGH_THRESHOLD = 0.05;
-    public static final double PROPORTION_CAPITAL_NOT_INVESTED = 0.25;
-
-    /**
      * Indicators Properties
      */
     public static final int RSI_LENGTH = 14;
@@ -24,6 +17,7 @@ public class Main {
      */
     public static final String FROM_DATE = "2018-05-01";
     public static final String TO_DATE = "2022-07-01";
+
 
     public static void main(String[] args) {
         var runTimeStart = System.currentTimeMillis();
@@ -40,6 +34,8 @@ public class Main {
 
         var indicators = Indicators.builder()
                 .rsiLength(RSI_LENGTH)
+                .daysbackBB(20)
+                .k(2)
                 .fromDate(LocalDate.parse(FROM_DATE))
                 .toDate(LocalDate.parse(TO_DATE))
                 .build();

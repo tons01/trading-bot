@@ -11,8 +11,8 @@ public class TradingAlgorithm {
     private final AlgorithmProperties algorithmProperties;
     private final FinanceManager financeManager;
     private final Indicators indicators;
-    private Map<LocalDate, SingleDayData> data;
     private final LocalDate initalDate;
+    private Map<LocalDate, SingleDayData> data;
 
     @Builder
     public TradingAlgorithm(AlgorithmProperties algorithmProperties, FinanceManager financeManager, Indicators indicators, LocalDate initalDate) {

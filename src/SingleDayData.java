@@ -11,13 +11,13 @@ import java.util.Map;
 @Setter
 public class SingleDayData {
     private LocalDate date;
-    private Map<LocalTime, TimeDetailData> timeDetailData;
     private double open;
     private double high;
     private double low;
     private double close;
     private double adjClose;
     private double volume;
+    private Map<LocalTime, TimeDetailData> timeDetailData;
 
     @Builder
     @Getter

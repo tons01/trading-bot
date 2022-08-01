@@ -26,9 +26,6 @@ public class Backtest {
         GraphicsPlotter.plotOutperformance(algorithm);
     }
 
-
-
-
     private double getOutperformance(LocalDate startDate, LocalDate endDate) {
         double openInitial = algorithm.getData().get(startDate).getOpen();
         double openEnd = algorithm.getData().get(endDate).getOpen();

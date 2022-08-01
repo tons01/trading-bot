@@ -1,7 +1,6 @@
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -21,13 +20,25 @@ public class GraphicsPlotter extends JPanel {
     // plot boolean
     private static boolean plotHistoricalMoneyTotal = true;
     private static boolean plotOutperformIndex = true;
+
     private static boolean plotSma50 = true;
-    private static boolean plotSma200 = true;
+    private static boolean plotSma200 = false;
+
+    private static boolean plotLowerBB = true;
+    private static boolean plotMiddleBB = false;
+    private static boolean plotHigherBB = true;
     // data
     private final List<Double> historicalMoneyTotal;
+
     private final List<Double> outperformIndex;
+
     private final List<Double> sma50;
     private final List<Double> sma200;
+
+    private final List<Double> lowerBB;
+    private final List<Double> middleBB;
+    private final List<Double> higherBB;
+
 
     public static void plotOutperformance(TradingAlgorithm algorithm) {
         var historicalFinanceData = algorithm.getFinanceManager().getHistoricalFinanceData();
@@ -42,6 +53,9 @@ public class GraphicsPlotter extends JPanel {
         var sma50List = getListOfIndicator(algorithm.getIndicators().getHistoricalSMA50s(), fromDate, toDate);
         var sma200List = getListOfIndicator(algorithm.getIndicators().getHistoricalSMA200s(), fromDate, toDate);
 
+        var lowerBBList = getListOfIndicator(algorithm.getIndicators().getHistoricalLowerBB(), fromDate, toDate);
+        var middleBBList = getListOfIndicator(algorithm.getIndicators().getHistoricalMiddleBB(), fromDate, toDate);
+        var higherBBList = getListOfIndicator(algorithm.getIndicators().getHistoricalSHigherBB(), fromDate, toDate);
 
         //create an instance of JFrame class
         JFrame frame = new JFrame();
@@ -52,6 +66,9 @@ public class GraphicsPlotter extends JPanel {
                 .outperformIndex(outperformIndexList)
                 .sma50(sma50List)
                 .sma200(sma200List)
+                .lowerBB(lowerBBList)
+                .middleBB(middleBBList)
+                .higherBB(higherBBList)
                 .build());
         frame.setSize(800, 600);
         frame.setLocation(200, 200);
@@ -118,13 +135,22 @@ public class GraphicsPlotter extends JPanel {
             plotData(graph, Color.RED, historicalMoneyTotal, x, height, scale);
         }
         if (plotOutperformIndex) {
-            plotData(graph, Color.black, outperformIndex, x, height, scale);
+            plotData(graph, Color.blue, outperformIndex, x, height, scale);
         }
         if (plotSma50) {
             plotData(graph, Color.GREEN, sma50, x, height, scale);
         }
         if (plotSma200) {
-            plotData(graph, Color.blue, sma200, x, height, scale);
+            plotData(graph, Color.cyan, sma200, x, height, scale);
+        }
+        if (plotLowerBB) {
+            plotData(graph,Color.DARK_GRAY, lowerBB,x,height,scale);
+        }
+        if (plotMiddleBB) {
+            plotData(graph,Color.DARK_GRAY, middleBB,x,height,scale);
+        }
+        if (plotHigherBB) {
+            plotData(graph,Color.DARK_GRAY, higherBB,x,height,scale);
         }
     }
 

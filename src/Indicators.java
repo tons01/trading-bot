@@ -11,36 +11,78 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Indicators {
+    /**
+     * RSI
+     */
     private final int rsiLength;
+
+    /**
+     * BB
+     */
+    private final int daysbackBB;
+    private final int k;
+
+
     private final LocalDate fromDate;
     private final LocalDate toDate;
 
     private Map<LocalDate, Double> historicalRSIs;
-    private Map<LocalDate, Double> historicalSMA200s;
     private Map<LocalDate, Double> historicalSMA50s;
+    private Map<LocalDate, Double> historicalSMA200s;
+    private Map<LocalDate, Double> historicalLowerBB;
+    private Map<LocalDate, Double> historicalMiddleBB;
+    private Map<LocalDate, Double> historicalSHigherBB;
 
     @Builder
-    public Indicators(int rsiLength, LocalDate fromDate, LocalDate toDate) {
+    public Indicators(int rsiLength, int daysbackBB, int k, LocalDate fromDate, LocalDate toDate) {
         this.rsiLength = rsiLength;
-        this.fromDate=fromDate;
-        this.toDate=toDate;
+        this.daysbackBB = daysbackBB;
+        this.k = k;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
 
         this.historicalRSIs = new HashMap<>();
         this.historicalSMA200s = new HashMap<>();
         this.historicalSMA50s = new HashMap<>();
+        this.historicalLowerBB = new HashMap<>();
+        this.historicalMiddleBB = new HashMap<>();
+        this.historicalSHigherBB = new HashMap<>();
     }
 
     public void calculateIndicators(TradingAlgorithm algorithm) {
 
         var data = algorithm.getData();
 
-        calculateRSI(data, fromDate, toDate);
-        calculateSMA200(data, fromDate, toDate);
-        calculateSMA50(data, fromDate, toDate);
+        calculateHistoricalRSIs(data, fromDate, toDate);
+        calculateHistoricalSMA200s(data, fromDate, toDate);
+        calculateHistoricalSMA50s(data, fromDate, toDate);
+
+        calculateHistoricalBBs(data, fromDate, toDate, 20, 2);
+
     }
 
-    private void calculateRSI(Map<LocalDate, SingleDayData> data, LocalDate fromDate, LocalDate toDate) {
+    private void calculateHistoricalBBs(Map<LocalDate, SingleDayData> data, LocalDate fromDate, LocalDate toDate, int daysBack, int k) {
 
+        fromDate.datesUntil(toDate.plusDays(1)).forEach(date -> {
+
+            var middleBB = calculateSmaRegular(date, data, daysBack);
+
+            double variance = date.minusDays(daysBack - 1).datesUntil(date)
+                                      .mapToDouble(daysVariance -> middleBB - data.get(daysVariance).getOpen())
+                                      .map(diff -> diff * diff).sum() / daysBack;
+            var standardDeviation = Math.sqrt(variance);
+
+            var lowerBB = middleBB - standardDeviation * k;
+            var higherBB = middleBB + standardDeviation * k;
+
+            historicalLowerBB.put(date, lowerBB);
+            historicalMiddleBB.put(date, middleBB);
+            historicalSHigherBB.put(date, higherBB);
+        });
+    }
+
+
+    private void calculateHistoricalRSIs(Map<LocalDate, SingleDayData> data, LocalDate fromDate, LocalDate toDate) {
 
         fromDate.datesUntil(toDate.plusDays(1)).forEach(date -> {
             double losses = 0;
@@ -57,16 +99,15 @@ public class Indicators {
 
             historicalRSIs.put(date, rsi);
         });
-
     }
 
-    private void calculateSMA200(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
+    private void calculateHistoricalSMA200s(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
 
         int daysBack = 200;
         calculateSmaRecursive(dateFrom, data, daysBack, historicalSMA200s, dateTo);
     }
 
-    private void calculateSMA50(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
+    private void calculateHistoricalSMA50s(Map<LocalDate, SingleDayData> data, LocalDate dateFrom, LocalDate dateTo) {
         int daysBack = 50;
         calculateSmaRecursive(dateFrom, data, daysBack, historicalSMA50s, dateTo);
     }
